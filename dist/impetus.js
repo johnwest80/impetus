@@ -32,6 +32,7 @@
 		var boundY = _ref.boundY;
 		var _ref$bounce = _ref.bounce;
 		var bounce = _ref$bounce === undefined ? true : _ref$bounce;
+		var directionLock = _ref.directionLock;
 
 		_classCallCheck(this, Impetus);
 
@@ -44,6 +45,7 @@
 		var paused = false;
 		var decelerating = false;
 		var trackingPoints = [];
+		var currentDirection = null;
 
 		/**
    * Initialize instance
@@ -164,6 +166,7 @@
 				pointerActive = true;
 				decelerating = false;
 				pointerId = event.id;
+				currentDirection = null;
 
 				pointerLastX = pointerCurrentX = event.x;
 				pointerLastY = pointerCurrentY = event.y;
@@ -183,8 +186,23 @@
    * @param  {Object} ev Normalized event
    */
 		function onMove(ev) {
-			ev.preventDefault();
 			var event = normalizeEvent(ev);
+
+			if (directionLock && !currentDirection) {
+				if (decelerating) {
+					currentDirection = directionLock;
+				} else if (Math.abs(pointerLastX - event.x) > Math.abs(pointerLastY - event.y)) {
+					currentDirection = 'horizontal';
+				} else {
+					currentDirection = 'vertical';
+				}
+			}
+
+			if (!directionLock || currentDirection === directionLock) {
+				ev.preventDefault();
+			} else {
+				return;
+			}
 
 			if (pointerActive && event.id === pointerId) {
 				pointerCurrentX = event.x;
