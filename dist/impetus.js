@@ -102,6 +102,20 @@
 		};
 
 		/**
+   * Remove all event listeners
+   * @public
+   */
+		this.destroy = function () {
+			sourceEl.removeEventListener('touchstart', onDown);
+			sourceEl.removeEventListener('mousedown', onDown);
+			document.removeEventListener('touchmove', onMove);
+			document.removeEventListener('touchend', onUp);
+			document.removeEventListener('touchcancel', stopTracking);
+			document.removeEventListener('mouseup', onUp);
+			document.removeEventListener('mousemove', onMove);
+		};
+
+		/**
    * Update the current x and y values
    * @public
    * @param {Number} x
@@ -219,7 +233,7 @@
 		function onUp(ev) {
 			var event = normalizeEvent(ev);
 
-			if (pointerActive && event.id === pointerId) {
+			if ( /* pointerActive && */event.id === pointerId) {
 				stopTracking();
 			}
 		}
